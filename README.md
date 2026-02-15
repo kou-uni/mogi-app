@@ -51,6 +51,29 @@ npm run dev
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開く
 
+## 🚀 Vercelへのデプロイ
+
+### 必要な環境変数（Vercel設定）
+
+Vercelのプロジェクト設定で以下の環境変数を設定してください：
+
+```
+DATABASE_URL=postgresql://username:password@host:port/database?schema=public
+```
+
+### デプロイ手順
+
+1. Vercelダッシュボードで PostgreSQL データベースを作成
+2. `DATABASE_URL` を環境変数に設定
+3. GitHubリポジトリと連携してデプロイ
+4. ビルド時に自動的にデータベースのマイグレーションとシードが実行されます
+
+**注意**: 初回デプロイ後、店舗データが表示されない場合は、Vercelのコンソールから以下を実行：
+
+```bash
+npx prisma db seed
+```
+
 ## 📁 プロジェクト構成
 
 ```
