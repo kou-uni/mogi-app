@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 店舗情報
+model Shop {
+  id          String   @id @default(uuid())
+  name        String
+  category    String   // "和菓子店", "パン屋", "てんぷら屋", "カフェ", など
+  description String?
+  address     String
+  phoneNumber String?  @map("phone_number")
+  imageUrl    String?  @map("image_url")
+  images      String[] // 複数の店舗画像
+  qrCode      String?  @map("qr_code") // QRコードデータ（base64など）
+  specialty   String[] // 名物・おすすめ商品
+  openingHours String? @map("opening_hours")
+  closedDays  String?  @map("closed_days")
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  reviews     Review[]
+  guides      GuideShopRecommendation[]
+
+  @@map("shops")
+}
+
+// 口コミ・応援メッセージ
+model Review {
+  id          String   @id @default(uuid())
+  shopId      String   @map("shop_id")
+  userName    String?  @map("user_name") // 匿名可（ニックネーム）
+  content     String
+  images      String[] // 投稿写真（複数枚可）
+  rating      Int?     // 1-5の評価（オプション）
+  tags        String[] // "美味しい", "雰囲気良い", "接客最高", など
+  isPublic    Boolean  @default(true) @map("is_public")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+// 道先案内人（ガイド）
+model Guide {
+  id           String   @id @default(uuid())
+  name         String
+  role         String   // "ホテルオーナー", "地元案内人", など
+  introduction String?
+  photoUrl     String?  @map("photo_url")
+  profileText  String?  @map("profile_text") // 自己紹介文
+  specialty    String?  // 得意分野（食べ歩き、歴史、など）
+  isActive     Boolean  @default(true) @map("is_active")
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  recommendations GuideShopRecommendation[]
+  routes          GuideRoute[]
+
+  @@map("guides")
+}
+
+// ガイドの店舗おすすめ（中間テーブル）
+model GuideShopRecommendation {
+  id              String   @id @default(uuid())
+  guideId         String   @map("guide_id")
+  shopId          String   @map("shop_id")
+  recommendText   String?  @map("recommend_text") // おすすめコメント
+  sortOrder       Int      @default(0) @map("sort_order")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  guide           Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  shop            Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@unique([guideId, shopId])
+  @@map("guide_shop_recommendations")
+}
+
+// ガイドの散歩ルート
+model GuideRoute {
+  id          String   @id @default(uuid())
+  guideId     String   @map("guide_id")
+  name        String   // ルート名（例: "朝の食べ歩きコース"）
+  description String?
+  shopIds     String[] @map("shop_ids") // 順番に訪れる店舗ID
+  duration    String?  // 所要時間（例: "2時間"）
+  distance    String?  // 距離（例: "1.5km"）
+  mapImageUrl String?  @map("map_image_url")
+  isPublic    Boolean  @default(true) @map("is_public")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  guide       Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@map("guide_routes")
+}
+
+// 電子チケット（将来拡張用・オプション）
+model Ticket {
+  id          String    @id @default(uuid())
+  userId      String?   @map("user_id") // 匿名可
+  shopId      String    @map("shop_id")
+  ticketCode  String    @unique @map("ticket_code") // チケット番号
+  amount      Int       // チケット金額
+  status      String    @default("unused") // "unused", "used", "expired"
+  purchasedAt DateTime  @default(now()) @map("purchased_at")
+  usedAt      DateTime? @map("used_at")
+  expiresAt   DateTime? @map("expires_at")
+
+  @@map("tickets")
+}
+
+// システム設定
+model SystemSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}

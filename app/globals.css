@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #F7F3ED;
+  --bg2: #EDE8DF;
+  --card: #fff;
+  --ink: #1a1a1a;
+  --ink2: #4a4540;
+  --ink3: #7a746c;
+  --ink4: #a8a198;
+  --ink5: #d0cbc3;
+  --accent: #8B4513;
+  --accent2: #C4956A;
+  --vermillion: #C73E3A;
+  --indigo: #2D4A6F;
+  --moss: #5B7A5E;
+  --gold: #B8963E;
+  --border: rgba(139, 69, 19, 0.1);
+  --r: 6px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink2);
+  font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+  font-weight: 400;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.02em;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+section {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--ink2);
+}
+
+em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+a {
+  color: var(--indigo);
+  text-decoration: none;
+}
+
+small {
+  font-size: 11px;
+  color: var(--ink4);
+  letter-spacing: 0.04em;
+}
+
+/* Toast notification */
+#toast.show {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px;
+  }
+}
